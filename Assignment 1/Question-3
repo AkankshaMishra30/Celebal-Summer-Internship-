@@ -1,0 +1,12 @@
+SELECT 
+    p.FirstName,
+    p.LastName,
+    sp.CountryRegionCode
+FROM 
+    Sales.Customer c
+JOIN 
+    Person.Person p ON c.PersonID = p.BusinessEntityID
+JOIN 
+    Person.StateProvince sp ON a.StateProvinceID = sp.StateProvinceID
+WHERE 
+    sp.CountryRegionCode IN ('GB', 'US');  -- 'GB' for United Kingdom, 'US' for United States
