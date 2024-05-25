@@ -1,0 +1,250 @@
+Question-21 
+SELECT DISTINCT
+    p.ProductID,
+    p.Name AS ProductName,
+    p.DiscontinuedDate,
+    soh.OrderDate
+FROM 
+    Production.Product p
+JOIN 
+    Sales.SalesOrderDetail sod ON p.ProductID = sod.ProductID
+WHERE 
+    p.DiscontinuedDate IS NOT NULL
+    AND p.DiscontinuedDate BETWEEN '1997-01-01' AND '1998-01-01'
+ORDER BY 
+    p.ProductID;
+----------------------------------------------------------------------------------------
+Question-22
+SELECT 
+    e1.FirstName AS EmployeeFirstName,
+    e1.LastName AS EmployeeLastName,
+    e2.FirstName AS SupervisorFirstName,
+    e2.LastName AS SupervisorLastName
+FROM 
+    HumanResources.Employee e1
+LEFT JOIN 
+    HumanResources.Employee e2 ON e1.ManagerID = e2.EmployeeID;
+------------------------------------------------------------------------------------------
+Question-23
+SELECT 
+    e.EmployeeID,
+    SUM(LineTotal) AS TotalSales
+FROM 
+    HumanResources.Employee e
+JOIN 
+    Sales.SalesOrderHeader ON e.EmployeeID = soh.SalesPersonID
+JOIN 
+    Sales.SalesOrderDetail ON soh.SalesOrderID = sod.SalesOrderID
+GROUP BY 
+    e.EmployeeID;
+-------------------------------------------------------------------------------------------
+Question-24
+SELECT 
+    e.ManagerID,
+    COUNT(*) AS NumberOfDirectReports
+FROM 
+    HumanResources.Employee e
+GROUP BY 
+    e.ManagerID
+HAVING 
+    COUNT(*) > 4;
+-----------------------------------------------------------------------------------------
+Question-26
+SELECT 
+    soh.SalesOrderID,
+    sod.ProductID,
+    p.Name AS ProductName
+FROM 
+    Sales.SalesOrderHeader soh
+JOIN 
+    Sales.SalesOrderDetail sod ON soh.SalesOrderID = sod.SalesOrderID
+JOIN 
+    Production.Product p ON sod.ProductID = p.ProductID;
+------------------------------------------------------------------------------------------
+Question-27
+SELECT 
+    soh.SalesOrderID,
+    soh.OrderDate,
+    c.CustomerID,
+    c.AccountNumber,
+    p.FirstName,
+    p.LastName,
+    SUM(sod.LineTotal) AS TotalAmountSpent
+FROM 
+    Sales.SalesOrderHeader soh
+JOIN 
+    Sales.Customer c ON soh.CustomerID = c.CustomerID
+JOIN 
+    Person.Person p ON c.PersonID = p.BusinessEntityID
+JOIN 
+    Sales.SalesOrderDetail sod ON soh.SalesOrderID = sod.SalesOrderID
+GROUP BY 
+    soh.SalesOrderID,
+    soh.OrderDate,
+    c.CustomerID,
+    c.AccountNumber,
+    p.FirstName,
+    p.LastName
+ORDER BY 
+    TotalAmountSpent DESC;
+------------------------------------------------------------------------------------------
+Question-29
+SELECT 
+    soh.SalesOrderID,
+    soh.OrderDate,
+    c.CustomerID,
+    c.AccountNumber,
+    p.FirstName,
+    p.LastName
+FROM 
+    Sales.SalesOrderHeader soh
+JOIN 
+    Sales.Customer c ON soh.CustomerID = c.CustomerID
+JOIN 
+    Person.Person p ON c.PersonID = p.BusinessEntityID
+LEFT JOIN 
+    Person.PersonPhone pp ON p.BusinessEntityID = pp.BusinessEntityID
+WHERE 
+    pp.PhoneNumberTypeID = 3 -- Assuming PhoneNumberTypeID 3 represents fax numbers
+    AND pp.PhoneNumber IS NULL;
+------------------------------------------------------------------------------------------
+Question-30
+SELECT DISTINCT
+    a.PostalCode
+FROM 
+    Sales.SalesOrderHeader soh
+JOIN 
+    Sales.SalesOrderDetail sod ON soh.SalesOrderID = sod.SalesOrderID
+JOIN 
+    Person.Address a ON soh.ShipToAddressID = a.AddressID
+JOIN 
+    Production.Product p ON sod.ProductID = p.ProductID
+WHERE 
+    p.Name = 'Tofu';
+-------------------------------------------------------------------------------------------
+Question-32
+SELECT DISTINCT
+    p.Name AS ProductName
+FROM 
+    Sales.SalesOrderHeader soh
+JOIN 
+    Sales.SalesOrderDetail sod ON soh.SalesOrderID = sod.SalesOrderID
+JOIN 
+    Person.Address a ON soh.ShipToAddressID = a.AddressID
+JOIN 
+    Production.Product p ON sod.ProductID = p.ProductID
+WHERE 
+    a.CountryRegionCode = 'FR';
+------------------------------------------------------------------------------------------
+Question-33
+SELECT 
+    p.Name AS ProductName,
+    pc.Name AS CategoryName
+FROM 
+    Purchasing.ProductVendor pv
+JOIN 
+    Production.Product p ON pv.ProductID = p.ProductID
+JOIN 
+    Production.ProductSubcategory psc ON p.ProductSubcategoryID = psc.ProductSubcategoryID
+WHERE 
+    v.Name = 'Speciality Biscuits Ltd';
+----------------------------------------------------------------------------------------------
+Question-34
+SELECT 
+    p.ProductID,
+    p.Name AS ProductName
+FROM 
+    Production.Product p
+LEFT JOIN 
+    Sales.SalesOrderDetail sod ON p.ProductID = sod.ProductID
+WHERE 
+    sod.SalesOrderID IS NULL;
+-----------------------------------------------------------------------------------------------
+Question-35
+SELECT 
+    ProductID,
+    Name AS ProductName,
+    UnitsInStock,
+    UnitsOnOrder
+FROM 
+    Production.Product
+WHERE 
+    UnitsInStock < 10
+    AND UnitsOnOrder = 0;
+-----------------------------------------------------------------------------------------------
+Question-36
+SELECT 
+    a.CountryRegionCode AS CountryCode,
+    SUM(sod.LineTotal) AS TotalSales
+FROM 
+    Sales.SalesOrderHeader soh
+JOIN 
+    Sales.SalesOrderDetail sod ON soh.SalesOrderID = sod.SalesOrderID
+JOIN 
+    Person.Address a ON soh.ShipToAddressID = a.AddressID
+GROUP BY 
+    a.CountryRegionCode
+ORDER BY 
+    TotalSales DESC
+----------------------------------------------------------------------------------------------
+Question-38
+SELECT 
+    OrderDate
+FROM 
+    Sales.SalesOrderHeader
+ORDER BY 
+    TotalDue DESC
+LIMIT 1;
+-----------------------------------------------------------------------------------------------
+Question-39
+SELECT 
+    p.Name AS ProductName,
+    SUM(sod.LineTotal) AS TotalRevenue
+FROM 
+    Sales.SalesOrderDetail sod
+JOIN 
+    Production.Product p ON sod.ProductID = p.ProductID
+GROUP BY 
+    p.Name;
+---------------------------------------------------------------------------------------------
+Question-40
+SELECT 
+    p.Name AS ProductName,
+    SUM(sod.UnitPrice * sod.OrderQty * (1 - sod.UnitPriceDiscount)) AS TotalRevenue
+FROM 
+    Sales.SalesOrderDetail sod
+JOIN 
+    Production.Product p ON sod.ProductID = p.ProductID
+GROUP BY 
+    p.Name;
+----------------------------------------------------------------------------------------------
+Question-41
+SELECT 
+    c.CustomerID,
+    c.AccountNumber,
+    p.FirstName,
+    p.LastName,
+    SUM(sod.LineTotal) AS TotalSalesAmount
+FROM 
+    Sales.Customer c
+JOIN 
+    Person.Person p ON c.PersonID = p.BusinessEntityID
+JOIN 
+    Sales.SalesOrderHeader soh ON c.CustomerID = soh.CustomerID
+JOIN 
+    Sales.SalesOrderDetail sod ON soh.SalesOrderID = sod.SalesOrderID
+GROUP BY 
+    c.CustomerID,
+    c.AccountNumber,
+    p.FirstName,
+    p.LastName
+ORDER BY 
+    TotalSalesAmount DESC
+-----------------------------------------------------------------------------------------------
+Question-42
+SELECT 
+    SUM(LineTotal) AS TotalRevenue
+FROM 
+    Sales.SalesOrderDetail;
+
+
