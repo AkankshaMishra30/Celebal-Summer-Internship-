@@ -1,0 +1,13 @@
+SELECT TOP 1
+    soh.SalesOrderID,
+    soh.OrderDate,
+    soh.DueDate,
+    soh.ShipDate,
+    soh.Status,
+    soh.CustomerID,
+    soh.SubTotal,
+    soh.TotalDue
+FROM 
+    Sales.SalesOrderHeader soh
+ORDER BY 
+    soh.TotalDue DESC;
