@@ -1,0 +1,8 @@
+SELECT 
+    c.CustomerID,
+    p.FirstName,
+    p.LastName
+    FROM 
+    Sales.Customer c
+JOIN 
+    Person.Person p ON c.PersonID = p.BusinessEntityID;
