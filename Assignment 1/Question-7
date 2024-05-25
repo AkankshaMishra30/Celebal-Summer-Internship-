@@ -1,0 +1,12 @@
+SELECT 
+    c.CustomerID,
+    p.FirstName,
+    p.LastName,
+FROM 
+    Sales.Customer c
+LEFT JOIN 
+    Sales.SalesOrderHeader soh ON c.CustomerID = soh.CustomerID
+WHERE 
+    soh.SalesOrderID IS NULL
+ORDER BY 
+    c.CustomerID;
